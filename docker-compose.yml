@@ -1,0 +1,26 @@
+version: '3.9'
+
+services: 
+    postgres:
+        restart: always
+        image: postgres
+        hostname: postgres
+        container_name: avito_adv_postgres
+        env_file: .env
+        ports: 
+            - 5432
+        environment:
+            DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    web:
+        restart: always
+        container_name: avito_adv_web
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/code
+        command: bash -c "while !</dev/tcp/postgres/5432; do sleep 1; done;"
+        ports: 
+            - 8000:8000
+        depends_on: 
+            - postgres
