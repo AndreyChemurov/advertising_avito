@@ -2,6 +2,7 @@ package restapi
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator"
@@ -17,34 +18,39 @@ import (
 //	id: идентификатор созданного объявления
 //	status_code: код результата (200 в случае успеха)
 func Create(w http.ResponseWriter, r *http.Request) {
-	var adv CreateRequest
+	var (
+		adv      CreateRequest
+		response []byte
+	)
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
-		responseJSON := errorType(http.StatusBadRequest, "Invalid JSON format")
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(responseJSON)
+		w.Write(response)
 
 		return
 	}
 
+	// Проврить валидность параметров
 	var validate *validator.Validate = validator.New()
 
 	err := validate.Struct(&adv)
 	if err != nil {
-		responseJSON := errorType(http.StatusBadRequest, "Validate wrong")
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(responseJSON)
+		w.Write(response)
 
 		return
 	}
 
-	responseNotFound404, _ := json.Marshal(responseNotFound404)
+	// Service logic
 
-	w.WriteHeader(http.StatusNotFound)
-	w.Write(responseNotFound404)
+	// Статус 200 ОК
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseOK)
 }
 
 // GetOne - метод получения конкретного объявления по его ID
@@ -61,7 +67,39 @@ func Create(w http.ResponseWriter, r *http.Request) {
 //	[alllinks]: ссылки на все фото
 //	status_code: код результата (200 в случае успеха)
 func GetOne(w http.ResponseWriter, r *http.Request) {
+	var (
+		adv      GetOneRequest
+		response []byte
+	)
 
+	// Проверить валидность JSON'а
+	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	// Проврить валидность параметров
+	var validate *validator.Validate = validator.New()
+
+	err := validate.Struct(&adv)
+	if err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	// Service logic
+
+	// Статус 200 ОК
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseOK)
 }
 
 // GetAll - метод возвращает все объявления
@@ -81,13 +119,45 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 //		- name (название объявления)
 //	status_code: код результата (200 в случае успеха)
 func GetAll(w http.ResponseWriter, r *http.Request) {
+	var (
+		adv      GetAllRequest
+		response []byte
+	)
 
+	// Проверить валидность JSON'а
+	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	// Проврить валидность параметров
+	var validate *validator.Validate = validator.New()
+
+	err := validate.Struct(&adv)
+	if err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	// Service logic
+
+	// Статус 200 ОК
+	w.WriteHeader(http.StatusOK)
+	w.Write(responseOK)
 }
 
-// NotFound ...
+// NotFound вызывается, если путь не существует
 func NotFound(w http.ResponseWriter, r *http.Request) {
-	responseNotFound404, _ := json.Marshal(responseNotFound404)
+	response := errorType(http.StatusNotFound, "not found")
 
 	w.WriteHeader(http.StatusNotFound)
-	w.Write(responseNotFound404)
+	w.Write(response)
 }

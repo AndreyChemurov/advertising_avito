@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-// ErrorType оборачивает данные (http статус код + сообщение) об ошибке
+// errorType оборачивает данные (http статус код + сообщение) об ошибке
 // в json и возвращает его вызывающему хэндлеру
 func errorType(status int, message string) (response []byte) {
 	err := map[string]map[string]string{
