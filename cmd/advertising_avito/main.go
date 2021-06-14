@@ -1,9 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"advertising_avito/internal/restapi"
+	"log"
+	"net/http"
 )
 
 func main() {
-	fmt.Println("hello world")
+	http.HandleFunc("/", restapi.NotFound)
+	http.HandleFunc("/create", restapi.Create)
+
+	log.Fatal(http.ListenAndServe(":8000", nil))
 }

@@ -3,7 +3,7 @@ version: '3.9'
 services: 
     postgres:
         restart: always
-        image: postgres
+        image: postgres:latest
         hostname: postgres
         container_name: avito_adv_postgres
         env_file: .env
@@ -19,7 +19,10 @@ services:
             dockerfile: Dockerfile
         volumes:
             - .:/code
-        command: bash -c "while !</dev/tcp/postgres/5432; do sleep 1; done;"
+        command: > 
+            bash -c "while !</dev/tcp/postgres/5432; do sleep 1; done; 
+            go build -o ./bin/main cmd/advertising_avito/main.go 
+            && ./bin/main"
         ports: 
             - 8000:8000
         depends_on: 

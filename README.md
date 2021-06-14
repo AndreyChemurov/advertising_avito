@@ -5,6 +5,9 @@
 - Все запросы выполняются через POST методы с JSON телом.
 - Использовалось при создании: golang 1.16, postgres 13, linux debian 10.</br></br>
 
+## Вопросы по реализации
+- Может ли быть цена 0 (бесплатно) при создании объявления? - Нет.
+
 ## Запуск
 ```bash
 git clone https://github.com/AndreyChemurov/advertising_avito.git
