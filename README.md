@@ -21,7 +21,7 @@ cd advertising_avito/
 4. Взаимодействие с базой данных происходит через интерфейс Database, который описывает те же методы: Create (создание объявление), GetAll (получение информации о всех созданных объявлениях), GetOne (получение информации об отдельном объявлении).
 5. Структура PostgreSQL реализует интерфейс Database, создает коннекшены и выполняет запросы.
 
-![advertising_avito](https://user-images.githubusercontent.com/58785926/121774952-76ddb280-cb8d-11eb-8bde-a555021e34f3.png)
+![advertising_avito](https://user-images.githubusercontent.com/58785926/121923084-3e7fd500-cd43-11eb-944c-225cb12e4892.png)
 
 ## Описание пакетов
 // TODO
