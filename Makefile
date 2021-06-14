@@ -1,1 +1,5 @@
-# go test -v -cover ./...
+test:
+	@go test -v -cover ./...
+
+lint:
+	@golangci-lint run -v

@@ -1,0 +1,22 @@
+run:
+  tests: false
+
+  skip-dirs:
+    - bin
+
+linters-settings:
+  revive:
+  staticcheck:
+  stylecheck:
+  unindent:
+  gocyclo:
+  gosimple:
+  gocritic:
+  staticcheck:
+  gosec:
+  errcheck:
+
+  
+
+  
+  
