@@ -8,11 +8,21 @@
 ## Вопросы по реализации
 - Может ли быть цена 0 (бесплатно) при создании объявления? - Нет.
 
-## Запуск
+## Запуск приложения
 ```bash
 git clone https://github.com/AndreyChemurov/advertising_avito.git
 cd advertising_avito/
 [sudo] docker-compose up
+```
+
+## Запуск тестов
+```bash
+make test
+```
+
+## Запуск линтеров
+```bash
+make lint
 ```
 
 ## Архитектура
