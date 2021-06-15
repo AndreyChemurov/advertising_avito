@@ -1,9 +1,13 @@
 package restapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"advertising_avito/internal/service"
+	"advertising_avito/internal/types"
 
 	"github.com/go-playground/validator"
 )
@@ -19,12 +23,16 @@ import (
 //	status_code: код результата (200 в случае успеха)
 func Create(w http.ResponseWriter, r *http.Request) {
 	var (
-		adv      CreateRequest
-		response []byte
+		restapiRequest  types.CreateRequest
+		response        []byte
+		serviceResponse types.CreateResponse
+		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
+	defer cancel()
+
 	// Проверить валидность JSON'а
-	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -36,7 +44,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	// Проврить валидность параметров
 	var validate *validator.Validate = validator.New()
 
-	err := validate.Struct(&adv)
+	err := validate.Struct(&restapiRequest)
 	if err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
@@ -47,10 +55,20 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
+	if serviceResponse, err = service.Create(ctx, restapiRequest); err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	response, _ = json.Marshal(serviceResponse)
 
 	// Статус 200 ОК
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseOK)
+	w.Write(response)
 }
 
 // GetOne - метод получения конкретного объявления по его ID
@@ -68,12 +86,16 @@ func Create(w http.ResponseWriter, r *http.Request) {
 //	status_code: код результата (200 в случае успеха)
 func GetOne(w http.ResponseWriter, r *http.Request) {
 	var (
-		adv      GetOneRequest
-		response []byte
+		restapiRequest  types.GetOneRequest
+		response        []byte
+		serviceResponse types.GetOneResponse
+		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
+	defer cancel()
+
 	// Проверить валидность JSON'а
-	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -85,7 +107,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	// Проврить валидность параметров
 	var validate *validator.Validate = validator.New()
 
-	err := validate.Struct(&adv)
+	err := validate.Struct(&restapiRequest)
 	if err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
@@ -96,10 +118,20 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
+	if serviceResponse, err = service.GetOne(ctx, restapiRequest); err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	response, _ = json.Marshal(serviceResponse)
 
 	// Статус 200 ОК
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseOK)
+	w.Write(response)
 }
 
 // GetAll - метод возвращает все объявления
@@ -120,12 +152,16 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 //	status_code: код результата (200 в случае успеха)
 func GetAll(w http.ResponseWriter, r *http.Request) {
 	var (
-		adv      GetAllRequest
-		response []byte
+		restapiRequest  types.GetAllRequest
+		response        []byte
+		serviceResponse types.GetAllResponse
+		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
+	defer cancel()
+
 	// Проверить валидность JSON'а
-	if err := json.NewDecoder(r.Body).Decode(&adv); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -137,7 +173,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	// Проврить валидность параметров
 	var validate *validator.Validate = validator.New()
 
-	err := validate.Struct(&adv)
+	err := validate.Struct(&restapiRequest)
 	if err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
@@ -148,10 +184,20 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
+	if serviceResponse, err = service.GetAll(ctx, restapiRequest); err != nil {
+		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	response, _ = json.Marshal(serviceResponse)
 
 	// Статус 200 ОК
 	w.WriteHeader(http.StatusOK)
-	w.Write(responseOK)
+	w.Write(response)
 }
 
 // NotFound вызывается, если путь не существует

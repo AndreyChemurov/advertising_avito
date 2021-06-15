@@ -8,15 +8,19 @@ linters-settings:
   revive:
   staticcheck:
   stylecheck:
-  unindent:
   gocyclo:
   gosimple:
   gocritic:
   staticcheck:
   gosec:
-  errcheck:
 
-  
-
-  
-  
+linters:
+  enable:
+    - revive
+    - staticcheck
+    - stylecheck
+    - gocyclo
+    - gosimple
+    - gocritic
+    - staticcheck
+    - gosec

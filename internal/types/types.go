@@ -1,6 +1,4 @@
-package restapi
-
-import "encoding/json"
+package types
 
 // CreateRequest - данные, которые запрашиваютя при создании объявления
 type CreateRequest struct {
@@ -44,10 +42,3 @@ type GetAllResponse struct {
 // Advertisement - данные, которые содержатся в каждом объявлении
 type Advertisement struct {
 }
-
-var _responseOK = map[string]string{
-	"status_code":    "200",
-	"status_message": "OK",
-}
-
-var responseOK, _ = json.Marshal(_responseOK)
