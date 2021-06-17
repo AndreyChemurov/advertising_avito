@@ -29,7 +29,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
-	defer cancel()
+	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -92,7 +92,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
-	defer cancel()
+	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -158,7 +158,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
-	defer cancel()
+	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
