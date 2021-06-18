@@ -25,7 +25,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	var (
 		restapiRequest  types.CreateRequest
 		response        []byte
-		serviceResponse types.CreateResponse
+		serviceResponse *types.CreateResponse
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
@@ -88,7 +88,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	var (
 		restapiRequest  types.GetOneRequest
 		response        []byte
-		serviceResponse types.GetOneResponse
+		serviceResponse *types.GetOneResponse
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 
@@ -154,7 +154,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	var (
 		restapiRequest  types.GetAllRequest
 		response        []byte
-		serviceResponse types.GetAllResponse
+		serviceResponse *types.GetAllResponse
 		ctx, cancel     = context.WithCancel(r.Context())
 	)
 

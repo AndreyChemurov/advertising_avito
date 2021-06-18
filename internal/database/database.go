@@ -1,6 +1,8 @@
 package database
 
-import "errors"
+import (
+	"errors"
+)
 
 // Database - интефейс базы данных.
 // Описывает методы:
@@ -14,7 +16,7 @@ type Database interface {
 }
 
 var databases = map[string]Database{
-	"postgres": newPostgres("postgres"),
+	"postgres": newPostgres(),
 }
 
 // GetDatabase - фабличный метод (здесь только для postgres)

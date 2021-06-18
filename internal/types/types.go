@@ -30,8 +30,8 @@ type GetOneResponse struct {
 	Name        string
 	Price       float64
 	MainLink    string
-	Description string
-	AllLinks    []string
+	Description string   `json:",omitempty"`
+	AllLinks    []string `json:",omitempty"`
 }
 
 // GetAllResponse - данные, котоорые возвращаются после выборки всех объявлений
