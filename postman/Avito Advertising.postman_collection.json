@@ -1,0 +1,318 @@
+{
+	"info": {
+		"_postman_id": "89c4d3cb-2f45-4d03-800e-4e99e9a03337",
+		"name": "Avito Advertising",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Advertisement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/create",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"create"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Advertisement",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"тест-1\",\n    \"description\": \"test-1!\",\n    \"links\": [\n        \"http://github.com\",\n        \"https://google.com\",\n        \"https://avito.ru/moskva\"\n    ],\n    \"price\": 1000.10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/create",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Jun 2021 19:41:00 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "8"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\"id\":1}"
+				},
+				{
+					"name": "Create Advertisement",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"@TEST_2+\",\n    \"description\": \"description-2\",\n    \"links\": [\n        \"https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0&q=45&auto=format&w=1200&h=675.0&fit=crop\"\n    ],\n    \"price\": 222\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/create",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"create"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Jun 2021 19:42:36 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "8"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\"id\":2}"
+				}
+			]
+		},
+		{
+			"name": "Get One Advertisement",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/get-one",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"get-one"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get One Advertisement",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"fields\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/get-one",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"get-one"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Jun 2021 19:43:04 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "173"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\"name\":\"тест-1\",\"price\":1000.1,\"main_link\":\"http://github.com\",\"description\":\"test-1!\",\"all_links\":[\"http://github.com\",\"https://google.com\",\"https://avito.ru/moskva\"]}"
+				},
+				{
+					"name": "Get One Advertisement",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/get-one",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"get-one"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Jun 2021 19:43:24 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "211"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\"name\":\"@TEST_2+\",\"price\":222,\"main_link\":\"https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0\\u0026q=45\\u0026auto=format\\u0026w=1200\\u0026h=675.0\\u0026fit=crop\"}"
+				}
+			]
+		},
+		{
+			"name": "Get All Advertisements",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8000/get-all",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"get-all"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get All Advertisements",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"page\": 1,\n    \"sort\": \"price_desc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8000/get-all",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"get-all"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 19 Jun 2021 19:43:39 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "301"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/plain; charset=utf-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\"advertisements\":[{\"name\":\"тест-1\",\"main_link\":\"http://github.com\",\"price\":1000.1},{\"name\":\"@TEST_2+\",\"main_link\":\"https://images.theconversation.com/files/350865/original/file-20200803-24-50u91u.jpg?ixlib=rb-1.1.0\\u0026q=45\\u0026auto=format\\u0026w=1200\\u0026h=675.0\\u0026fit=crop\",\"price\":222}]}"
+				}
+			]
+		}
+	]
+}
