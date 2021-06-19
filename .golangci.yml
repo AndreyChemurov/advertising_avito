@@ -4,17 +4,31 @@ run:
   skip-dirs:
     - bin
 
+output:
+  format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
+
 linters-settings:
-  revive:
   staticcheck:
+    go: "1.16.5"
+    checks: [ "all" ]
   stylecheck:
+    go: "1.16.5"
+    checks: [ "all" ]
+    go-import-whitelist:
+     - fmt
   gocyclo:
-  gosimple:
-  gocritic:
-  staticcheck:
-  gosec:
+    min-complexity: 15
+  gofmt:
+    simplify: true
+  prealloc:
+    simple: false
+    range-loops: true
+    for-loops: true
 
 linters:
+  disable-all: true
   enable:
     - revive
     - staticcheck
@@ -24,3 +38,6 @@ linters:
     - gocritic
     - staticcheck
     - gosec
+    - gofmt
+    - govet
+    - prealloc
