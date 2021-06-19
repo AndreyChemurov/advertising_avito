@@ -1,8 +1,8 @@
 package database
 
 import (
+	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"os"
 
@@ -49,7 +49,7 @@ func newPostgres() *postgres {
 	return instance
 }
 
-func (p *postgres) Create(name string, desc string, links []string, price float64) (int, error) {
+func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (int, error) {
 	var id int
 
 	// Начало транзакции
@@ -103,11 +103,10 @@ func (p *postgres) Create(name string, desc string, links []string, price float6
 	return id, nil
 }
 
-func (p *postgres) GetOne(id int, fields bool) (string, float64, string, string, []string, error) {
+func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, float64, string, string, []string, error) {
 	var (
-		stmt   *sql.Stmt
-		rows   *sql.Rows
-		exists bool
+		stmt *sql.Stmt
+		rows *sql.Rows
 	)
 
 	// Начало транзакции
@@ -121,29 +120,7 @@ func (p *postgres) GetOne(id int, fields bool) (string, float64, string, string,
 	// TODO: correct rollback with error handling
 	defer tx.Rollback()
 
-	// Проверить, существовует ли объявление с конкретным ID
-	stmt, err = tx.Prepare("SELECT EXISTS(SELECT * FROM advertisement WHERE id=$1);")
-
-	if err != nil {
-		return "", 0, "", "", []string{}, err
-	}
-
-	if err = stmt.QueryRow(id).Scan(&exists); err != nil {
-		// Если не удается счесть в переменную...
-		return "", 0, "", "", []string{}, err
-	} else if !exists {
-		// ... или если объявления с таким ID не существует
-		return "", 0, "", "", []string{}, errors.New("advertisement with such ID does not exist")
-	}
-
 	// Подготовка к селекту
-	// if fields {
-	// 	// Если указано поле 'fields', то нужно вывести дополнительные поля описание и все ссылки на фото
-	// 	stmt, err = tx.Prepare("SELECT name, link, price, description FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1);")
-	// } else {
-	// 	// Иначе только название, цену и ссылку на главное фото
-	// 	stmt, err = tx.Prepare("SELECT name, link, price FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1) LIMIT 1;")
-	// }
 	stmt, err = tx.Prepare("SELECT name, link, price, description FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1);")
 
 	if err != nil {
@@ -179,10 +156,10 @@ func (p *postgres) GetOne(id int, fields bool) (string, float64, string, string,
 		return "", 0, "", "", []string{}, err
 	}
 
-	return name, price, link, description, allLinks, nil
+	return name, price, allLinks[0], description, allLinks, nil
 }
 
-func (p *postgres) GetAll(page int, sort string) (string, float64, string, string, []string, error) {
+func (p *postgres) GetAll(ctx context.Context, page int, sort string) (string, float64, string, string, []string, error) {
 	//
 	return "", 0, "", "", []string{}, nil
 }

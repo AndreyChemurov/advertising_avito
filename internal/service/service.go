@@ -4,6 +4,7 @@ import (
 	"advertising_avito/internal/database"
 	"advertising_avito/internal/types"
 	"context"
+	"fmt"
 )
 
 func Create(ctx context.Context, r types.CreateRequest) (*types.CreateResponse, error) {
@@ -12,7 +13,7 @@ func Create(ctx context.Context, r types.CreateRequest) (*types.CreateResponse, 
 		return nil, err
 	}
 
-	id, err := database.Create(r.Name, r.Description, r.Links, r.Price)
+	id, err := database.Create(ctx, r.Name, r.Description, r.Links, r.Price)
 	if err != nil {
 		return nil, err
 	}
@@ -29,11 +30,13 @@ func GetOne(ctx context.Context, r types.GetOneRequest) (*types.GetOneResponse, 
 		return nil, err
 	}
 
-	// База данных не должна заботится об опиональных полях,
-	// этим занимается бизнес-логика.
-	name, price, mainLink, desc, allLinks, err := database.GetOne(r.ID, r.Fields)
+	name, price, mainLink, desc, allLinks, err := database.GetOne(ctx, r.ID, r.Fields)
 	if err != nil {
 		return nil, err
+	}
+
+	if name == "" {
+		return nil, fmt.Errorf("advertisement with id %d does not exist", r.ID)
 	}
 
 	response := new(types.GetOneResponse)
@@ -55,7 +58,7 @@ func GetAll(ctx context.Context, r types.GetAllRequest) (*types.GetAllResponse, 
 		return nil, err
 	}
 
-	// name, mainLink, price := database.GetAll(r.Page, r.Sort)
+	// name, mainLink, price := database.GetAll(ctx, r.Page, r.Sort)
 
 	return nil, nil
 }

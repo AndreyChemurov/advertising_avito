@@ -5,7 +5,7 @@ type CreateRequest struct {
 	Name        string   `json:"name" validate:"required,max=200"`
 	Description string   `json:"description" validate:"required,max=1000"`
 	Links       []string `json:"links" validate:"required,min=1,max=3,dive,required"`
-	Price       float64  `json:"price" validate:"required"`
+	Price       float64  `json:"price" validate:"required,min=0"`
 }
 
 // GetAllRequest - данные, которые запрашиваются при выборке одного объявления
@@ -16,29 +16,32 @@ type GetAllRequest struct {
 
 // GetOneRequest - данные, которые запрашиваются при выборке всех объявлений
 type GetOneRequest struct {
-	ID     int  `json:"id" validate:"required"`
+	ID     int  `json:"id" validate:"required,min=1"`
 	Fields bool `json:"fields"`
 }
 
 // CreateResponse - данные, котоорые возвращаются после создания объявления
 type CreateResponse struct {
-	ID int
+	ID int `json:"id"`
 }
 
 // GetOneResponse - данные, котоорые возвращаются после выборки одного объявления
 type GetOneResponse struct {
-	Name        string
-	Price       float64
-	MainLink    string
-	Description string   `json:",omitempty"`
-	AllLinks    []string `json:",omitempty"`
+	Name        string   `json:"name"`
+	Price       float64  `json:"price"`
+	MainLink    string   `json:"main_link"`
+	Description string   `json:"description,omitempty"`
+	AllLinks    []string `json:"all_links,omitempty"`
 }
 
 // GetAllResponse - данные, котоорые возвращаются после выборки всех объявлений
 type GetAllResponse struct {
-	Advertisements []Advertisement
+	Advertisements []Advertisement `json:"advertisements"`
 }
 
 // Advertisement - данные, которые содержатся в каждом объявлении
 type Advertisement struct {
+	Name     string  `json:"name"`
+	MainLink string  `json:"main_link"`
+	Price    float64 `json:"price"`
 }
