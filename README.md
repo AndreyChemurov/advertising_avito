@@ -31,7 +31,7 @@ make lint
 4. Взаимодействие с базой данных происходит через интерфейс Database, который описывает те же методы: Create (создание объявление), GetAll (получение информации о всех созданных объявлениях), GetOne (получение информации об отдельном объявлении).
 5. Структура Postgres реализует интерфейс Database, создает коннекшены и выполняет запросы.
 
-![advertising_avito](https://user-images.githubusercontent.com/58785926/121923084-3e7fd500-cd43-11eb-944c-225cb12e4892.png)
+![advertising_avito](https://user-images.githubusercontent.com/58785926/122653483-71640780-d14d-11eb-9186-14b88161f8d6.png)
 
 ## Описание пакетов
 // TODO
