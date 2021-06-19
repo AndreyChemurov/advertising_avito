@@ -1,7 +1,6 @@
 package restapi
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -26,10 +25,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.CreateRequest
 		response        []byte
 		serviceResponse *types.CreateResponse
-		ctx, cancel     = context.WithCancel(r.Context())
 	)
-
-	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -55,7 +51,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
-	if serviceResponse, err = service.Create(ctx, restapiRequest); err != nil {
+	if serviceResponse, err = service.Create(restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -89,10 +85,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.GetOneRequest
 		response        []byte
 		serviceResponse *types.GetOneResponse
-		ctx, cancel     = context.WithCancel(r.Context())
 	)
-
-	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -118,7 +111,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
-	if serviceResponse, err = service.GetOne(ctx, restapiRequest); err != nil {
+	if serviceResponse, err = service.GetOne(restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -155,10 +148,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.GetAllRequest
 		response        []byte
 		serviceResponse *types.GetAllResponse
-		ctx, cancel     = context.WithCancel(r.Context())
 	)
-
-	defer cancel() // TODO: add logic
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -183,8 +173,24 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Проверить валидность поля "sort"
+	sortOrder, ok := types.SortingOptions[restapiRequest.Sort]
+	if !ok {
+		response = errorType(http.StatusBadRequest, "wrong sort parameter: use \"date_desc\", \"date_asc\", \"price_desc\", \"price_asc\"")
+
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(response)
+
+		return
+	}
+
+	serviceRequest := types.GetAllForService{
+		Page: restapiRequest.Page,
+		Sort: sortOrder,
+	}
+
 	// Service logic
-	if serviceResponse, err = service.GetAll(ctx, restapiRequest); err != nil {
+	if serviceResponse, err = service.GetAll(serviceRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)

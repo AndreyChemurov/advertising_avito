@@ -1,7 +1,7 @@
 package database
 
 import (
-	"context"
+	"advertising_avito/internal/types"
 	"errors"
 )
 
@@ -11,9 +11,9 @@ import (
 //	GetOne - получить информацию по конкретному объявлению;
 //	GetAll - получить информацию по всем объявлениям.
 type Database interface {
-	Create(context.Context, string, string, []string, float64) (int, error)
-	GetOne(context.Context, int, bool) (string, float64, string, string, []string, error)
-	GetAll(context.Context, int, string) (string, float64, string, string, []string, error)
+	Create(string, string, []string, float64) (int, error)
+	GetOne(int, bool) (string, float64, string, []string, error)
+	GetAll(int, string) ([]types.Advertisement, error)
 }
 
 var databases = map[string]Database{

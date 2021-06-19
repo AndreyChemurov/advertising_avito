@@ -22,5 +22,7 @@ func main() {
 	http.HandleFunc("/get-one", restapi.GetOne)
 	http.HandleFunc("/get-all", restapi.GetAll)
 
+	log.Println("Server is ready to accept requests")
+
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

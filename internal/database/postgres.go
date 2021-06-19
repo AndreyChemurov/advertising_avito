@@ -1,7 +1,7 @@
 package database
 
 import (
-	"context"
+	"advertising_avito/internal/types"
 	"database/sql"
 	"fmt"
 	"os"
@@ -49,7 +49,7 @@ func newPostgres() *postgres {
 	return instance
 }
 
-func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (int, error) {
+func (p *postgres) Create(name string, desc string, links []string, price float64) (int, error) {
 	var id int
 
 	// Начало транзакции
@@ -103,7 +103,7 @@ func (p *postgres) Create(ctx context.Context, name string, desc string, links [
 	return id, nil
 }
 
-func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, float64, string, string, []string, error) {
+func (p *postgres) GetOne(id int, fields bool) (string, float64, string, []string, error) {
 	var (
 		stmt *sql.Stmt
 		rows *sql.Rows
@@ -113,7 +113,7 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 	tx, err := p.db.Begin()
 
 	if err != nil {
-		return "", 0, "", "", []string{}, err
+		return "", 0, "", []string{}, err
 	}
 
 	// Откат будет игнориться, если был коммит
@@ -124,11 +124,11 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 	stmt, err = tx.Prepare("SELECT name, link, price, description FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1);")
 
 	if err != nil {
-		return "", 0, "", "", []string{}, err
+		return "", 0, "", []string{}, err
 	}
 
 	if rows, err = stmt.Query(id); err != nil {
-		return "", 0, "", "", []string{}, err
+		return "", 0, "", []string{}, err
 	}
 
 	defer rows.Close()
@@ -145,7 +145,7 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 		if err = rows.Scan(&name, &link, &price, &description); err != nil {
 			// TODO: correct rollback with error handling
 			_ = tx.Rollback()
-			return "", 0, "", "", []string{}, err
+			return "", 0, "", []string{}, err
 		}
 
 		allLinks = append(allLinks, link)
@@ -153,13 +153,82 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 
 	// Коммит
 	if err = tx.Commit(); err != nil {
-		return "", 0, "", "", []string{}, err
+		return "", 0, "", []string{}, err
 	}
 
-	return name, price, allLinks[0], description, allLinks, nil
+	return name, price, description, allLinks, nil
 }
 
-func (p *postgres) GetAll(ctx context.Context, page int, sort string) (string, float64, string, string, []string, error) {
-	//
-	return "", 0, "", "", []string{}, nil
+func (p *postgres) GetAll(page int, sort string) ([]types.Advertisement, error) {
+	var (
+		rows *sql.Rows
+		stmt *sql.Stmt
+	)
+
+	// Начало транзакции
+	tx, err := p.db.Begin()
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Откат будет игнориться, если был коммит
+	// TODO: correct rollback with error handling
+	defer tx.Rollback()
+
+	// Подготовка к селекту
+	SQLString := fmt.Sprintf(`
+	SELECT name, link, price FROM (
+		SELECT DISTINCT ON (p.adv_id) name, link, price, created_at 
+		FROM advertisement a INNER JOIN photos p on (a.id=p.adv_id)) subquery
+	ORDER BY %s OFFSET %d - 1 LIMIT 10;
+	`, sort, page)
+
+	stmt, err = tx.Prepare(SQLString)
+
+	if err != nil {
+		return nil, err
+	}
+
+	// Получение из выборки
+	if rows, err = stmt.Query(); err != nil {
+		return nil, err
+	}
+
+	var advertisements = make([]types.Advertisement, 0)
+
+	for rows.Next() {
+		var (
+			name  string
+			link  string
+			price float64
+
+			adv types.Advertisement
+		)
+
+		if err = rows.Scan(&name, &link, &price); err != nil {
+			// TODO: correct rollback with error handling
+			_ = tx.Rollback()
+			return nil, err
+		}
+
+		adv = types.Advertisement{
+			Name:     name,
+			MainLink: link,
+			Price:    price,
+		}
+
+		advertisements = append(advertisements, adv)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	// Коммит
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return advertisements, nil
 }

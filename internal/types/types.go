@@ -4,7 +4,7 @@ package types
 type CreateRequest struct {
 	Name        string   `json:"name" validate:"required,max=200"`
 	Description string   `json:"description" validate:"required,max=1000"`
-	Links       []string `json:"links" validate:"required,min=1,max=3,dive,required"`
+	Links       []string `json:"links" validate:"required,min=1,max=3,dive,required,url"`
 	Price       float64  `json:"price" validate:"required,min=0"`
 }
 
@@ -44,4 +44,19 @@ type Advertisement struct {
 	Name     string  `json:"name"`
 	MainLink string  `json:"main_link"`
 	Price    float64 `json:"price"`
+}
+
+// SortingOptions - мапа соответствий сортировок restapi-sql для GetAll
+var SortingOptions = map[string]string{
+	"price_desc": "price DESC",
+	"price_asc":  "price",
+	"date_desc":  "created_at DESC",
+	"date_asc":   "created_at",
+}
+
+// GetAllForService - преобразованные данные для бизнес-логики.
+// Sort имеет прямое соответствие с SortingOptions
+type GetAllForService struct {
+	Page int
+	Sort string
 }

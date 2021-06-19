@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	_ "github.com/lib/pq" //
@@ -46,10 +47,13 @@ func CreateTableAndIndecies() (err error) {
 		dbname   = os.Getenv("POSTGRES_DB")
 	)
 
+	log.Println("Creating database tables...")
+
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
+		log.Println("Server failed on opening connection")
 		return err
 	}
 
@@ -58,8 +62,10 @@ func CreateTableAndIndecies() (err error) {
 	_, err = db.Exec(createDatabase)
 
 	if err != nil {
+		log.Println("Server failed on creating tables")
 		return err
 	}
 
+	log.Println("Creating database tables done")
 	return nil
 }
