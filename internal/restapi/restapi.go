@@ -1,9 +1,11 @@
 package restapi
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"advertising_avito/internal/service"
 	"advertising_avito/internal/types"
@@ -25,7 +27,10 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.CreateRequest
 		response        []byte
 		serviceResponse *types.CreateResponse
+		ctx, cancel     = context.WithTimeout(r.Context(), 200*time.Millisecond)
 	)
+
+	defer cancel()
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -51,7 +56,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
-	if serviceResponse, err = service.Create(restapiRequest); err != nil {
+	if serviceResponse, err = service.Create(ctx, restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -85,7 +90,10 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.GetOneRequest
 		response        []byte
 		serviceResponse *types.GetOneResponse
+		ctx, cancel     = context.WithTimeout(r.Context(), 200*time.Millisecond)
 	)
+
+	defer cancel()
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -111,7 +119,7 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
-	if serviceResponse, err = service.GetOne(restapiRequest); err != nil {
+	if serviceResponse, err = service.GetOne(ctx, restapiRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)
@@ -148,7 +156,10 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		restapiRequest  types.GetAllRequest
 		response        []byte
 		serviceResponse *types.GetAllResponse
+		ctx, cancel     = context.WithTimeout(r.Context(), 200*time.Millisecond)
 	)
+
+	defer cancel()
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -190,7 +201,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Service logic
-	if serviceResponse, err = service.GetAll(serviceRequest); err != nil {
+	if serviceResponse, err = service.GetAll(ctx, serviceRequest); err != nil {
 		response = errorType(http.StatusBadRequest, fmt.Sprintf("%v", err))
 
 		w.WriteHeader(http.StatusBadRequest)

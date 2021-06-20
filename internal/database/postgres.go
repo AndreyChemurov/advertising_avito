@@ -2,6 +2,7 @@ package database
 
 import (
 	"advertising_avito/internal/types"
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -49,7 +50,7 @@ func newPostgres() *postgres {
 	return instance
 }
 
-func (p *postgres) Create(name string, desc string, links []string, price float64) (int, error) {
+func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (int, error) {
 	var id int
 
 	// Начало транзакции
@@ -103,7 +104,7 @@ func (p *postgres) Create(name string, desc string, links []string, price float6
 	return id, nil
 }
 
-func (p *postgres) GetOne(id int, fields bool) (string, float64, string, []string, error) {
+func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, float64, string, []string, error) {
 	var (
 		stmt *sql.Stmt
 		rows *sql.Rows
@@ -159,7 +160,7 @@ func (p *postgres) GetOne(id int, fields bool) (string, float64, string, []strin
 	return name, price, description, allLinks, nil
 }
 
-func (p *postgres) GetAll(page int, sort string) ([]types.Advertisement, error) {
+func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.Advertisement, error) {
 	var (
 		rows *sql.Rows
 		stmt *sql.Stmt

@@ -3,18 +3,19 @@ package service
 import (
 	"advertising_avito/internal/database"
 	"advertising_avito/internal/types"
+	"context"
 
 	"errors"
 	"fmt"
 )
 
-func Create(r types.CreateRequest) (*types.CreateResponse, error) {
+func Create(ctx context.Context, r types.CreateRequest) (*types.CreateResponse, error) {
 	database, err := database.GetDatabase("postgres")
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := database.Create(r.Name, r.Description, r.Links, r.Price)
+	id, err := database.Create(ctx, r.Name, r.Description, r.Links, r.Price)
 	if err != nil {
 		return nil, err
 	}
@@ -25,13 +26,13 @@ func Create(r types.CreateRequest) (*types.CreateResponse, error) {
 	return response, nil
 }
 
-func GetOne(r types.GetOneRequest) (*types.GetOneResponse, error) {
+func GetOne(ctx context.Context, r types.GetOneRequest) (*types.GetOneResponse, error) {
 	database, err := database.GetDatabase("postgres")
 	if err != nil {
 		return nil, err
 	}
 
-	name, price, desc, allLinks, err := database.GetOne(r.ID, r.Fields)
+	name, price, desc, allLinks, err := database.GetOne(ctx, r.ID, r.Fields)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +56,13 @@ func GetOne(r types.GetOneRequest) (*types.GetOneResponse, error) {
 	return response, nil
 }
 
-func GetAll(r types.GetAllForService) (*types.GetAllResponse, error) {
+func GetAll(ctx context.Context, r types.GetAllForService) (*types.GetAllResponse, error) {
 	database, err := database.GetDatabase("postgres")
 	if err != nil {
 		return nil, err
 	}
 
-	advertisements, err := database.GetAll(r.Page, r.Sort)
+	advertisements, err := database.GetAll(ctx, r.Page, r.Sort)
 	if err != nil {
 		return nil, err
 	}
