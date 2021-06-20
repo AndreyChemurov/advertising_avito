@@ -3,6 +3,7 @@ package restapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -12,6 +13,14 @@ import (
 
 	"github.com/go-playground/validator"
 )
+
+func checkMethod(method string) error {
+	if method != "POST" {
+		return errors.New("only POST method allowed")
+	}
+
+	return nil
+}
 
 // Create - метод создания нового объявления
 // Аргументы:
@@ -31,6 +40,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	)
 
 	defer cancel()
+
+	if err := checkMethod(r.Method); err != nil {
+		response = errorType(http.StatusMethodNotAllowed, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(response)
+
+		return
+	}
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -94,6 +112,15 @@ func GetOne(w http.ResponseWriter, r *http.Request) {
 	)
 
 	defer cancel()
+
+	if err := checkMethod(r.Method); err != nil {
+		response = errorType(http.StatusMethodNotAllowed, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(response)
+
+		return
+	}
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
@@ -160,6 +187,15 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	)
 
 	defer cancel()
+
+	if err := checkMethod(r.Method); err != nil {
+		response = errorType(http.StatusMethodNotAllowed, fmt.Sprintf("%v", err))
+
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(response)
+
+		return
+	}
 
 	// Проверить валидность JSON'а
 	if err := json.NewDecoder(r.Body).Decode(&restapiRequest); err != nil {
