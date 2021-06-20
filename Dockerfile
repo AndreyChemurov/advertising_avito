@@ -1,7 +1,5 @@
 FROM golang:latest
-RUN apt-get update && apt-get install make && \
-    go get github.com/go-playground/validator && \
-    go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1 && \
+RUN go get github.com/go-playground/validator && \
     go get github.com/lib/pq
 RUN mkdir /code
 WORKDIR /code
