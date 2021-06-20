@@ -17,11 +17,14 @@ cd advertising_avito/
 
 ## Запуск тестов
 ```bash
+apt-get update && apt-get install make
 make test
 ```
 
 ## Запуск линтеров
 ```bash
+apt-get update && apt-get install make
+go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
 make lint
 ```
 
