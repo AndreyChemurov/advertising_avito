@@ -223,7 +223,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 	// Проверить валидность поля "sort"
 	sortOrder, ok := types.SortingOptions[restapiRequest.Sort]
 	if !ok {
-		response = errorType(http.StatusBadRequest, "wrong sort parameter: use \"date_desc\", \"date_asc\", \"price_desc\", \"price_asc\"")
+		response = errorType(http.StatusBadRequest, "wrong sort parameter: use 'date_desc', 'date_asc', 'price_desc', 'price_asc'")
 
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(response)
