@@ -17,15 +17,12 @@ cd advertising_avito/
 
 ## Запуск тестов
 ```bash
-apt-get update && apt-get install make
-make test
+go test -v -cover ./...
 ```
 
-## Запуск линтеров (требует >= Go 1.15)
+## Запуск линтеров (require >= Go 1.15, golangci-lint@v1.40.1)
 ```bash
-apt-get update && apt-get install make
-go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
-make lint
+golangci-lint run -v ./...
 ```
 
 ## Архитектура
