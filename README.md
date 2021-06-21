@@ -21,7 +21,7 @@ apt-get update && apt-get install make
 make test
 ```
 
-## Запуск линтеров
+## Запуск линтеров (требует >= Go 1.15)
 ```bash
 apt-get update && apt-get install make
 go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.40.1
