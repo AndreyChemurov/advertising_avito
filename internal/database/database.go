@@ -21,7 +21,7 @@ var databases = map[string]Database{
 	"postgres": newPostgres(),
 }
 
-// GetDatabase - фабличный метод (здесь только для postgres)
+// GetDatabase - фабричный метод (здесь только для postgres)
 // получения объекта базы данных.
 func GetDatabase(driver string) (Database, error) {
 	database, found := databases[driver]

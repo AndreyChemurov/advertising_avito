@@ -53,7 +53,6 @@ func newPostgres() *postgres {
 func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (id int, err error) {
 	// Начало транзакции
 	tx, err := p.db.Begin()
-
 	if err != nil {
 		return
 	}
@@ -70,7 +69,6 @@ func (p *postgres) Create(ctx context.Context, name string, desc string, links [
 
 	// Подготовка к добавлению в таблицу "advertisement"
 	stmt, err := tx.Prepare("INSERT INTO advertisement VALUES (DEFAULT, $1, $2, $3) RETURNING id;")
-
 	if err != nil {
 		return
 	}
@@ -84,7 +82,6 @@ func (p *postgres) Create(ctx context.Context, name string, desc string, links [
 
 	// Подготовка к добавлению в таблицу "photos"
 	stmt, err = tx.Prepare("INSERT INTO photos VALUES (DEFAULT, $1, $2);")
-
 	if err != nil {
 		return
 	}
@@ -118,7 +115,6 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (name string
 
 	// Начало транзакции
 	tx, err := p.db.Begin()
-
 	if err != nil {
 		return
 	}
@@ -135,7 +131,6 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (name string
 
 	// Подготовка к селекту
 	stmt, err = tx.Prepare("SELECT name, link, price, description FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1);")
-
 	if err != nil {
 		return
 	}
@@ -148,6 +143,7 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (name string
 
 	for rows.Next() {
 		var link string
+
 		if err = rows.Scan(&name, &link, &price, &desc); err != nil {
 			rerr := tx.Rollback()
 			if rerr != nil {
@@ -175,7 +171,6 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) (advs []ty
 
 	// Начало транзакции
 	tx, err := p.db.Begin()
-
 	if err != nil {
 		return
 	}
@@ -199,7 +194,6 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) (advs []ty
 	`, sort, page)
 
 	stmt, err = tx.Prepare(SQLString)
-
 	if err != nil {
 		return
 	}
@@ -214,8 +208,7 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) (advs []ty
 			name  string
 			link  string
 			price float64
-
-			adv types.Advertisement
+			adv   types.Advertisement
 		)
 
 		if err = rows.Scan(&name, &link, &price); err != nil {
