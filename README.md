@@ -7,6 +7,7 @@
 
 ## Вопросы по реализации
 - Может ли быть цена 0 (бесплатно) при создании объявления? - Нет.
+- Есть ли валидация ссылок? - Да, ссылки начинаются с http://, https:// и т.д.
 
 ## Запуск приложения
 ```bash
@@ -63,4 +64,4 @@ golangci-lint run -v ./...
 
 ## Результаты выполнения 
 **Выгрузка коллекции запросов:**</br>
-[Папка с файлом json для импорта](https://github.com/AndreyChemurov/advertising_avito/tree/master/postman)
+[Папка](https://github.com/AndreyChemurov/advertising_avito/tree/master/postman) с файлом json для импорта.
