@@ -50,39 +50,43 @@ func newPostgres() *postgres {
 	return instance
 }
 
-func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (int, error) {
-	var id int
-
+func (p *postgres) Create(ctx context.Context, name string, desc string, links []string, price float64) (id int, err error) {
 	// Начало транзакции
 	tx, err := p.db.Begin()
 
 	if err != nil {
-		return 0, err
+		return
 	}
 
 	// Откат будет игнориться, если был коммит
-	// TODO: correct rollback with error handling
-	defer tx.Rollback()
+	defer func() {
+		if err != nil {
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on create: %v. error on rollback: %v", err, rerr)
+			}
+		}
+	}()
 
 	// Подготовка к добавлению в таблицу "advertisement"
 	stmt, err := tx.Prepare("INSERT INTO advertisement VALUES (DEFAULT, $1, $2, $3) RETURNING id;")
 
 	if err != nil {
-		return 0, err
+		return
 	}
 
 	defer stmt.Close()
 
 	// Добавление в таблицу "advertisement" с возвращением ID
 	if err = stmt.QueryRow(name, desc, price).Scan(&id); err != nil {
-		return 0, err
+		return
 	}
 
 	// Подготовка к добавлению в таблицу "photos"
 	stmt, err = tx.Prepare("INSERT INTO photos VALUES (DEFAULT, $1, $2);")
 
 	if err != nil {
-		return 0, err
+		return
 	}
 
 	// Добавление в таблицу "photos"
@@ -90,21 +94,23 @@ func (p *postgres) Create(ctx context.Context, name string, desc string, links [
 		_, err = stmt.Exec(id, link)
 
 		if err != nil {
-			// TODO: correct rollback with error handling
-			_ = tx.Rollback()
-			return 0, err
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on get-one: %v. error on rollback: %v", err, rerr)
+			}
+			return
 		}
 	}
 
 	// Коммит
 	if err = tx.Commit(); err != nil {
-		return 0, err
+		return
 	}
 
 	return id, nil
 }
 
-func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, float64, string, []string, error) {
+func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (name string, price float64, desc string, allLinks []string, err error) {
 	var (
 		stmt *sql.Stmt
 		rows *sql.Rows
@@ -114,39 +120,40 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 	tx, err := p.db.Begin()
 
 	if err != nil {
-		return "", 0, "", []string{}, err
+		return
 	}
 
 	// Откат будет игнориться, если был коммит
-	// TODO: correct rollback with error handling
-	defer tx.Rollback()
+	defer func() {
+		if err != nil {
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on get-one: %v. error on rollback: %v", err, rerr)
+			}
+		}
+	}()
 
 	// Подготовка к селекту
 	stmt, err = tx.Prepare("SELECT name, link, price, description FROM advertisement INNER JOIN photos ON (advertisement.id=$1 and adv_id=$1);")
 
 	if err != nil {
-		return "", 0, "", []string{}, err
+		return
 	}
 
 	if rows, err = stmt.Query(id); err != nil {
-		return "", 0, "", []string{}, err
+		return
 	}
 
 	defer rows.Close()
 
-	var (
-		name        string
-		description string
-		link        string
-		price       float64
-		allLinks    = make([]string, 0, 3)
-	)
-
 	for rows.Next() {
-		if err = rows.Scan(&name, &link, &price, &description); err != nil {
-			// TODO: correct rollback with error handling
-			_ = tx.Rollback()
-			return "", 0, "", []string{}, err
+		var link string
+		if err = rows.Scan(&name, &link, &price, &desc); err != nil {
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on get-one: %v. error on rollback: %v", err, rerr)
+			}
+			return
 		}
 
 		allLinks = append(allLinks, link)
@@ -154,13 +161,13 @@ func (p *postgres) GetOne(ctx context.Context, id int, fields bool) (string, flo
 
 	// Коммит
 	if err = tx.Commit(); err != nil {
-		return "", 0, "", []string{}, err
+		return
 	}
 
-	return name, price, description, allLinks, nil
+	return
 }
 
-func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.Advertisement, error) {
+func (p *postgres) GetAll(ctx context.Context, page int, sort string) (advs []types.Advertisement, err error) {
 	var (
 		rows *sql.Rows
 		stmt *sql.Stmt
@@ -170,12 +177,18 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.A
 	tx, err := p.db.Begin()
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// Откат будет игнориться, если был коммит
-	// TODO: correct rollback with error handling
-	defer tx.Rollback()
+	defer func() {
+		if err != nil {
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on get-all: %v. error on rollback: %v", err, rerr)
+			}
+		}
+	}()
 
 	// Подготовка к селекту
 	SQLString := fmt.Sprintf(`
@@ -188,15 +201,13 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.A
 	stmt, err = tx.Prepare(SQLString)
 
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	// Получение из выборки
 	if rows, err = stmt.Query(); err != nil {
-		return nil, err
+		return
 	}
-
-	var advertisements = make([]types.Advertisement, 0)
 
 	for rows.Next() {
 		var (
@@ -208,9 +219,11 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.A
 		)
 
 		if err = rows.Scan(&name, &link, &price); err != nil {
-			// TODO: correct rollback with error handling
-			_ = tx.Rollback()
-			return nil, err
+			rerr := tx.Rollback()
+			if rerr != nil {
+				err = fmt.Errorf("error on get-all: %v. error on rollback: %v", err, rerr)
+			}
+			return
 		}
 
 		adv = types.Advertisement{
@@ -219,17 +232,17 @@ func (p *postgres) GetAll(ctx context.Context, page int, sort string) ([]types.A
 			Price:    price,
 		}
 
-		advertisements = append(advertisements, adv)
+		advs = append(advs, adv)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return
 	}
 
 	// Коммит
 	if err = tx.Commit(); err != nil {
-		return nil, err
+		return
 	}
 
-	return advertisements, nil
+	return
 }
